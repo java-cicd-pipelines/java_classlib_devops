@@ -1,0 +1,27 @@
+name: Java Build and Deploy Pipeline
+
+on:
+  push:
+     branches:
+      - main
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # 1: Build - tests ##
+  build:
+   uses: java-cicd-pipelines/java-reusable-pipelines/.github/workflows/build-pipeline.yml@main
+   with:
+    java_version: '17'
+    maven_version: '3.8.6'  
+   secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  #2: Deploy to GitHub Packages ##
+  deploy:
+   needs: build
+   uses: java-cicd-pipelines/java-reusable-pipelines/.github/workflows/package-deploy.yml@main
+
+  
